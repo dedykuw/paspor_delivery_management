@@ -31,6 +31,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/lib', express.static(path.join(__dirname, 'node_modules')));
 
 app.use(function(req, res, next) {
     req.isAuthenticated = function() {
@@ -72,9 +73,13 @@ app.get('/api/delivery/deliveries', deliveryController.getAllDeliveries);
 app.post('/api/delivery/new', deliveryController.newDeliveryPost);
 app.post('/api/delivery/update', deliveryController.updateDelivery);
 app.post('/api/delivery/delete', deliveryController.deleteDelivery);
+app.post('/api/delivery/get_active_delivery', deliveryController.getOneActiveDeliveryByPasportAndName);
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'app', 'index.html'));
+});
+app.get('/confirm', function(req, res) {
+    res.sendFile(path.join(__dirname, 'confirm_app', 'confirm.html'));
 });
 
 app.get('*', function(req, res) {

@@ -10,7 +10,43 @@ exports.getAllDeliveries = getAllDeliveries;
 exports.newDeliveryPost = newDeliveryPost;
 exports.updateDelivery = updateDelivery;
 exports.deleteDelivery = deleteDelivery;
+exports.getOneActiveDeliveryByPasportAndName = getOneActiveDeliveryByPasportAndName;
 
+function getOneActiveDeliveryByPasportAndName(req, res) {
+
+    req.assert(CLIENT_CONST.FIELDS.NAME, 'Nama harus terisi').notEmpty();
+    req.assert(CLIENT_CONST.FIELDS.PASPORT_NUMBER, 'Paspor harus '+CLIENT_CONST.PASPORT_CHAR_LENGTH+' Karakter').len(CLIENT_CONST.PASPORT_CHAR_LENGTH, CLIENT_CONST.PASPORT_CHAR_LENGTH);
+    var errors = req.validationErrors();
+    if (errors) {
+        return res.status(400).send(errors);
+    }
+    console.log('trying to fetch delivery data by pasport number and name ' +req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER] );
+    var where = {};
+    where[CLIENT_CONST.FIELDS.PASPORT_NUMBER] = req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER];
+    where[CLIENT_CONST.FIELDS.NAME] = req.body[CLIENT_CONST.FIELDS.NAME];
+    _getOneClient(where)
+        .then(function (client) {
+            if (client == null) return res.status(400).send({msg : 'Data dengan paspor ' +req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER] + ' tidak ditemukan'});
+            console.log('Client found with id' + client.id);
+            var whereDelivery = {};
+            whereDelivery[DELIVERY_CONST.FIELDS.CLIENT_ID] = client.id;
+            whereDelivery[DELIVERY_CONST.FIELDS.STATUS] = 0;
+            _getDelivery(whereDelivery)
+                .then(function (Delivery) {
+                    if (Delivery == null) return res.status(400).send({msg : 'Data pengiriman dengan paspor ' +req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER] + 'tidak ditemukan'});
+                    res.json({ data : Delivery.toJSON()});
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    return res.status(400).send(err);
+                })
+        })
+        .catch(function (err) {
+            console.log(err);
+            return res.status(400).send(err);
+        })
+
+}
 function deleteDelivery(req, res) {
     console.log('received a request to delete delivery with id' + req.body[DELIVERY_CONST.FIELDS.ID]);
     req.assert(DELIVERY_CONST.FIELDS.ID, 'Id tidak disisipkan').notEmpty();
@@ -136,12 +172,8 @@ function newDeliveryPost(req, res) {
 
 
 }
-function _getDelivery(where) {
-    var fetchParams = {
-        require : false,
-        withRelated : ['client','expedition']
-    };
-    return Delivery.forge().where(where).fetch(fetchParams);
+function _getDelivery(where,orderBy) {
+    return Delivery.getDelivery(where, orderBy);
 }
 function getAllDeliveries(req,res) {
     var fetchParams = {
@@ -191,4 +223,7 @@ function _getClientByPasportNumber(req) {
 }
 function _removeDelivery(where) {
     return Delivery.deleteOne(where);
+}
+function _getOneClient(where) {
+    return Client.getClient(where);
 }

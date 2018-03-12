@@ -1,0 +1,18 @@
+<form ng-submit="search(userForm.$valid)" name="userForm" novalidate>
+    <legend>Silahkan Isi Data Berikut!</legend>
+    <div class="form-group">
+        <label for="name">Nama </label>
+        <input type="text" name="name" id="name" placeholder="Nama Sesuai Yang Tertera di Paspor" class="form-control" ng-model="client.name" autofocus ng-minlength="3" required>
+        <p ng-show="userForm.name.$invalid && !userForm.name.$pristine" class="help-block text-info">Isi nama anda sesuai yang tertera di paspor!</p>
+
+    </div>
+    <div class="form-group">
+        <label for="pasport">Nomor Paspor</label>
+        <input type="text" name="pasport" id="pasport" placeholder="Nomor Paspor" class="form-control" ng-model="client.pasport_no" ng-maxlength="8" ng-minlength="8">
+        <p ng-show="userForm.pasport.$error.minlength" class="help-block text-info">Nomor paspor memiliki delapan karakter!</p>
+        <p ng-show="userForm.pasport.$error.maxlength" class="help-block text-info">Nomor paspor memiliki delapan karakter!</p>
+    </div>
+    <button type="submit" class="btn btn-success" ng-disabled="userForm.$invalid">Cari Paspor Saya</button>
+
+</form>
+

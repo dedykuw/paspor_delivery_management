@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="panel">
+        <div class="panel-body">
+            <div id="wizard-step-container">
+                <ul class="nav nav-pills nav-justified">
+                    <li ng-repeat="step in steps" ng-class="{'active':step.step == currentStep}"><a  href="">{{step.step}}. {{step.name}}</a></li>
+                </ul>
+            </div>
+
+            <div id="wizard-content-container">
+                <ng-include src="getStepTemplate()"></ng-include>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 style="color:red;"><span class="glyphicon glyphicon-lock"></span> Mohon Menunggu Mencari Data Anda</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar"
+                         aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

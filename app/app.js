@@ -1,6 +1,9 @@
 angular.module('MyApp', ['ngRoute', 'satellizer'])
   .config(function($routeProvider, $locationProvider, $authProvider) {
-    $locationProvider.html5Mode(true);
+    $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false
+    });
 
     $routeProvider
       .when('/', {
@@ -25,10 +28,19 @@ angular.module('MyApp', ['ngRoute', 'satellizer'])
         controller: 'ProfileCtrl',
         resolve: { loginRequired: loginRequired }
       })
+      .when('/confirm', {
+        templateUrl: 'partials/confirm.html',
+        controller: 'ConfirmCtrl'
+      })
       .when('/forgot', {
         templateUrl: 'partials/forgot.html',
         controller: 'ForgotCtrl',
         resolve: { skipIfAuthenticated: skipIfAuthenticated }
+      })
+      .when('/delivery_sheet', {
+        templateUrl: 'partials/delivery_sheet.html',
+        controller: 'DeliverySheetController',
+        resolve: { loginRequired : loginRequired }
       })
       .when('/reset/:token', {
         templateUrl: 'partials/reset.html',

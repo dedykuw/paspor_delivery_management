@@ -8,4 +8,5 @@ function getAllClient(req,res) {
     });
 }
 
-
+function getLatestDeliveryByClientNameAndPaspor(req, res) {
+}

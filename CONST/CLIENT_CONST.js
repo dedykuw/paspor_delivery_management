@@ -3,6 +3,7 @@
  */
 var CLIENT_CONST = {
     TABLE_NAME : 'clients',
+    PASPORT_CHAR_LENGTH : 8,
     FIELDS : {
         NAME : 'name',
         ADDRESS_TW : 'address_tw',

@@ -2,7 +2,10 @@ angular.module('MyApp', ['ngRoute', 'satellizer'])
   .config(["$routeProvider", "$locationProvider", "$authProvider", function($routeProvider, $locationProvider, $authProvider) {
     skipIfAuthenticated.$inject = ["$location", "$auth"];
     loginRequired.$inject = ["$location", "$auth"];
-    $locationProvider.html5Mode(true);
+    $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false
+    });
 
     $routeProvider
       .when('/', {
@@ -27,10 +30,19 @@ angular.module('MyApp', ['ngRoute', 'satellizer'])
         controller: 'ProfileCtrl',
         resolve: { loginRequired: loginRequired }
       })
+      .when('/confirm', {
+        templateUrl: 'partials/confirm.html',
+        controller: 'ConfirmCtrl'
+      })
       .when('/forgot', {
         templateUrl: 'partials/forgot.html',
         controller: 'ForgotCtrl',
         resolve: { skipIfAuthenticated: skipIfAuthenticated }
+      })
+      .when('/delivery_sheet', {
+        templateUrl: 'partials/delivery_sheet.html',
+        controller: 'DeliverySheetController',
+        resolve: { loginRequired : loginRequired }
       })
       .when('/reset/:token', {
         templateUrl: 'partials/reset.html',
@@ -62,6 +74,13 @@ angular.module('MyApp', ['ngRoute', 'satellizer'])
     }
   }]);
 
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+angular.module('MyApp')
+    .controller('ConfirmCtrl', ["$scope", "$rootScope", "Delivery", "DELIVERY_CONST", "Client", "CLIENT_CONST", function($scope, $rootScope, Delivery, DELIVERY_CONST, Client, CLIENT_CONST) {
+
+    }]);
 angular.module('MyApp')
   .controller('ContactCtrl', ["$scope", "Contact", function($scope, Contact) {
     $scope.sendContactForm = function() {
@@ -79,6 +98,20 @@ angular.module('MyApp')
     };
   }]);
 
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+angular.module('MyApp')
+    .controller('DeliverySheetController', ["$scope", "$rootScope", "Delivery", "DELIVERY_CONST", function($scope, $rootScope, Delivery, DELIVERY_CONST) {
+        $scope.profile = $rootScope.currentUser;
+        init();
+
+        function init() {
+            Delivery.getDeliveries().then(function (deliveries) {
+                console.log(deliveries);
+            })
+        }
+    }]);
 angular.module('MyApp')
   .controller('ForgotCtrl', ["$scope", "Account", function($scope, Account) {
     $scope.forgotPassword = function() {
@@ -299,6 +332,47 @@ angular.module('MyApp')
       }
     };
   }]);
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+angular.module('MyApp')
+    .factory('Client', ["$http", function($http) {
+        var folder = '/api/delivery';
+        return {
+            updateDelivery: function(data) {
+                return $http.post(folder+'/update', data);
+            },
+            deleteDelivery: function(data) {
+                return $http.post(folder+'/delete',data);
+            },
+            addDelivery: function(data) {
+                return $http.post(folder+'/new', data);
+            },
+            getDeliveries : function () {
+                return $http.get(folder+'/deliveries')
+            }
+        };
+    }]);
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+angular.module('MyApp')
+    .constant('CLIENT_CONST', function() {
+        return {
+            NAME : 'name',
+            ADDRESS_TW : 'address_tw',
+            ADDRESS_IDR : 'address_idr',
+            ARC : 'arc',
+            KTP : 'ktp',
+            BIRTH_DATE : 'user_id',
+            PHONE_NUMBER : 'phone_number',
+            PASPORT_NUMBER : 'pasport_no',
+            ID : 'id'
+        };
+    });
 angular.module('MyApp')
   .factory('Contact', ["$http", function($http) {
     return {
@@ -307,3 +381,54 @@ angular.module('MyApp')
       }
     };
   }]);
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+angular.module('MyApp')
+    .factory('Delivery', ["$http", function($http) {
+        var folder = '/api/delivery';
+        return {
+            updateDelivery: function(data) {
+                return $http.post(folder+'/update', data);
+            },
+            deleteDelivery: function(data) {
+                return $http.post(folder+'/delete',data);
+            },
+            addDelivery: function(data) {
+                return $http.post(folder+'/new', data);
+            },
+            getDeliveries : function () {
+                return $http.get(folder+'/deliveries')
+            }
+        };
+    }]);
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+angular.module('MyApp')
+    .constant('DELIVERY_CONST', function() {
+        return {
+            CLIENT_ID : 'client_id',
+            EXPEDITION : 'expedition_id',
+            EXPEDITION_NO : 'expedition_no',
+            INPUT_BY : 'user_id',
+            DELIVERY_DATE : 'delivery_date',
+            RECEIVED_DATE : 'received_date',
+            STATUS : 'status',
+            ADDRESS : 'address',
+            PHONE_NUMBER : 'phone_no',
+            ID : 'id'
+        };
+    });
+/**
+ * Created by tekwan on 3/10/2018.
+ */
+angular.module('MyApp')
+    .constant('EXPEDITION_CONST', function() {
+        return {
+            EXPEDITION_ID : 'exp_id',
+            ID : 'id',
+            EXPEDITION_NAME : 'name',
+            ADDRESS : 'address'
+        };
+    });

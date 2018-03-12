@@ -19,6 +19,14 @@ function staticFunct() {
         whereParams[CLIENT.FIELDS.PASPORT_NUMBER] = number;
         return this.forge().query({where: whereParams }).fetch();
     }
+    function getClient(where, orderBy) {
+        if (!orderBy) {
+            var orderBy = {};
+            orderBy.field = CLIENT.FIELDS.ID;
+            orderBy.sort = 'DESC';
+        }
+        return this.forge().orderBy(orderBy.field, orderBy.sort).where(where).fetch();
+    }
     function createOne(data, options) {
             return this.forge(data).save(null, options);
     }
@@ -28,7 +36,8 @@ function staticFunct() {
     return {
         byPassportNumber : byPassportNumber,
         createOne : createOne,
-        updateOne : updateOne
+        updateOne : updateOne,
+        getClient : getClient
     }
 }
 module.exports = bookshelf.model('Client', Client);

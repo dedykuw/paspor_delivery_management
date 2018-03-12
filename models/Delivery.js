@@ -32,11 +32,24 @@ function staticFunct() {
     function deleteOne(where) {
         return this.forge().where(where).destroy({require : true});
     }
+    function getDelivery(where, orderBy){
+        var fetchParams = {
+            require : false,
+            withRelated : ['client','expedition']
+        };
+        if (!orderBy) {
+            var orderBy = {};
+            orderBy.field = DELIVERY_CONST.FIELDS.ID;
+            orderBy.sort = 'DESC';
+        }
+        return this.forge().orderBy(orderBy.field, orderBy.sort).where(where).fetch(fetchParams);
+    }
     return {
         byPassportNumber : byPassportNumber,
         createOne : createOne,
         updateOne : updateOne,
-        deleteOne : deleteOne
+        deleteOne : deleteOne,
+        getDelivery : getDelivery
     }
 }
 module.exports = bookshelf.model('Delivery', Delivery);
