@@ -2,8 +2,7 @@
  * Created by tekwan on 3/10/2018.
  */
 angular.module('MyApp')
-    .constant('DELIVERY_CONST', function() {
-        return {
+    .constant('DELIVERY_CONST',  {
             CLIENT_ID : 'client_id',
             EXPEDITION : 'expedition_id',
             EXPEDITION_NO : 'expedition_no',
@@ -13,6 +12,15 @@ angular.module('MyApp')
             STATUS : 'status',
             ADDRESS : 'address',
             PHONE_NUMBER : 'phone_no',
-            ID : 'id'
-        };
+            ID : 'id',
+            STATUS : {
+                RECEIVED : 4,
+                SENDING : 3,
+                PUBLISHING : 2,
+                NEW_REQUEST : 1,
+                NEW_REQUEST_LABEL : 'Data Baru',
+                RECEIVED_LABEL : 'Diterima',
+                SENDING_LABEL : 'Dkirim',
+                PUBLISHING_LABEL : 'Sedang Dicetak',
+            }
     });

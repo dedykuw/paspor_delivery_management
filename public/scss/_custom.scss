@@ -1,0 +1,14 @@
+// Here you can add other styles
+.ui-grid {
+  height: 700px;
+}
+.ui-grid .ui-grid-render-container-body .ui-grid-viewport {
+  overflow : hidden !important;
+  /* or use: overflow-x: hide!important; */
+}
+.date-time-filter-buttons {
+  width: 100%;
+  height: 2em;
+  padding: inherit;
+  text-align: center;
+}

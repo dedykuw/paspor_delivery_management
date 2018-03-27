@@ -8,8 +8,8 @@ angular.module('MyConfirmApp')
             updateDelivery: function(data) {
                 return $http.post(folder+'/update', data);
             },
-            getDeliveryByPasporAndName: function(data) {
-                return $http.post(folder+'/get_active_delivery', data);
+            checkDeliveryByPasporAndName: function(data) {
+                return $http.post(folder+'/check_active_delivery', data);
             },
             deleteDelivery: function(data) {
                 return $http.post(folder+'/delete',data);
@@ -19,6 +19,9 @@ angular.module('MyConfirmApp')
             },
             getDeliveries : function () {
                 return $http.get(folder+'/deliveries')
+            },
+            confirmPasporDelivery : function (data) {
+                return $http.post(folder+'/confirm_delivery',data)
             }
         };
     });

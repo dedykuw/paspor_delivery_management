@@ -1,13 +1,10 @@
-<div class="container">
-    <div class="panel">
-        <div class="panel-body">
-            <div ng-if="messages.error" role="alert" class="alert alert-danger">
-                <div ng-repeat="error in messages.error">{{error.msg}}</div>
-            </div>
-            <div ng-if="messages.success" role="alert" class="alert alert-success">
-                <div ng-repeat="success in messages.success">{{success.msg}}</div>
-            </div>
-
+<div class="col-lg-12">
+    <div class="card" style="height: 50rem;">
+        <div class="card-header">
+            <i class="fa fa-align-justify"></i> Combined All Table
+        </div>
+        <div class="card-body">
+            <div ui-grid="gridColumn" ui-grid-pagination ></div>
         </div>
     </div>
 </div>

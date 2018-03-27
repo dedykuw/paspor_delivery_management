@@ -73,7 +73,9 @@ app.get('/api/delivery/deliveries', deliveryController.getAllDeliveries);
 app.post('/api/delivery/new', deliveryController.newDeliveryPost);
 app.post('/api/delivery/update', deliveryController.updateDelivery);
 app.post('/api/delivery/delete', deliveryController.deleteDelivery);
-app.post('/api/delivery/get_active_delivery', deliveryController.getOneActiveDeliveryByPasportAndName);
+//app.post('/api/delivery/get_active_delivery', deliveryController.getOneActiveDeliveryByPasportAndName);
+app.post('/api/delivery/check_active_delivery', deliveryController.checkActiveDeliveryByPasportAndName);
+app.post('/api/delivery/confirm_delivery', deliveryController.confirmDelivey);
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'app', 'index.html'));

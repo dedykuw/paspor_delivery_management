@@ -1,0 +1,33 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ custom.title }}</h4>
+        <button aria-label="Close" class="close" type="button">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div moment-picker="custom.filterDate"
+             locale="id"
+             format="ll"
+             min-view="year"
+             today="true"
+             keyboard="true"
+             inline="true"
+             set-on-select="true">
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary"
+                type="submit"  ng-click="custom.setFilterDate(custom.filterDate)">
+            Apply
+        </button>
+
+        <button type="button"
+                class="btn btn-secondary"
+                ng-click="custom.cancelDateFilter()">
+            Cancel
+        </button>
+
+    </div>
+</div>

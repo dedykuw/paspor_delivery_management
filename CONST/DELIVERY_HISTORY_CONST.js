@@ -14,6 +14,12 @@ var DELIVERY_HISTORY_CONST = {
         ADDRESS : 'address',
         PHONE_NUMBER : 'phone_no',
         ID : 'id'
+    },
+    STATUS : {
+        RECEIVED : 4,
+        SENDING : 3,
+        PUBLISHING : 2,
+        NEW_REQUEST : 1
     }
 };
 module.exports = DELIVERY_HISTORY_CONST;

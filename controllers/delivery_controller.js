@@ -11,7 +11,28 @@ exports.newDeliveryPost = newDeliveryPost;
 exports.updateDelivery = updateDelivery;
 exports.deleteDelivery = deleteDelivery;
 exports.getOneActiveDeliveryByPasportAndName = getOneActiveDeliveryByPasportAndName;
+exports.checkActiveDeliveryByPasportAndName = checkActiveDeliveryByPasportAndName;
+exports.confirmDelivey = confirmDelivery;
+function confirmDelivery(req, res) {
+    req.assert(DELIVERY_CONST.FIELDS.ID, 'ID pengiriman harus disertakan');
+    req.assert(DELIVERY_CONST.FIELDS.STATUS, 'Status pengiriman harus disertakan');
+    var err = req.validationErrors();
+    if (err) return res.status(400).send(err);
+    console.log('receive delivery confirmation request with id ' + req.body[DELIVERY_CONST.FIELDS.ID] );
+    var data = {};
+    data[DELIVERY_CONST.FIELDS.STATUS] = req.body[DELIVERY_CONST.FIELDS.STATUS];
+    var where = {};
+    where[DELIVERY_CONST.FIELDS.ID] = req.body[DELIVERY_CONST.FIELDS.ID];
+    _updateDelivery(req, where, data)
+        .then(function (Delivery) {
+            console.log('Delivery status now '+ Delivery.get(DELIVERY_CONST.FIELDS.STATUS)+ ' with id ' +req.body[DELIVERY_CONST.FIELDS.ID] );
+            res.json({ success : 1 });
+        })
+        .catch(function (err) {
+            return res.status(400).send(err)
+        })
 
+}
 function getOneActiveDeliveryByPasportAndName(req, res) {
 
     req.assert(CLIENT_CONST.FIELDS.NAME, 'Nama harus terisi').notEmpty();
@@ -35,6 +56,46 @@ function getOneActiveDeliveryByPasportAndName(req, res) {
                 .then(function (Delivery) {
                     if (Delivery == null) return res.status(400).send({msg : 'Data pengiriman dengan paspor ' +req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER] + 'tidak ditemukan'});
                     res.json({ data : Delivery.toJSON()});
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    return res.status(400).send(err);
+                })
+        })
+        .catch(function (err) {
+            console.log(err);
+            return res.status(400).send(err);
+        })
+
+}
+function checkActiveDeliveryByPasportAndName(req, res) {
+
+    req.assert(CLIENT_CONST.FIELDS.NAME, 'Nama harus terisi').notEmpty();
+    req.assert(CLIENT_CONST.FIELDS.PASPORT_NUMBER, 'Paspor harus '+CLIENT_CONST.PASPORT_CHAR_LENGTH+' Karakter').len(CLIENT_CONST.PASPORT_CHAR_LENGTH, CLIENT_CONST.PASPORT_CHAR_LENGTH);
+    var errors = req.validationErrors();
+    if (errors) {
+        return res.status(400).send(errors);
+    }
+    console.log('trying to fetch delivery data by pasport number and name ' +req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER] );
+    var where = {};
+    where[CLIENT_CONST.FIELDS.PASPORT_NUMBER] = req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER];
+    where[CLIENT_CONST.FIELDS.NAME] = req.body[CLIENT_CONST.FIELDS.NAME];
+    _getOneClient(where)
+        .then(function (client) {
+            var responseData =  {msg : 'Data dengan paspor ' +req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER] + ' tidak ditemukan',  data : { exist : 0}};
+            if (client == null) return res.status(400).send(responseData);
+            console.log('Client found with id' + client.id);
+            var whereDelivery = {};
+            whereDelivery[DELIVERY_CONST.FIELDS.CLIENT_ID] = client.id;
+            whereDelivery[DELIVERY_CONST.FIELDS.STATUS] = 0;
+            _getDelivery(whereDelivery)
+                .then(function (Delivery) {
+                    var responseData = {msg : 'Data pengiriman dengan paspor ' +req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER] + 'tidak ditemukan', data : { exist : 0}};
+                    if (Delivery == null) return res.status(400).send(responseData);
+                    res.json({
+                            exist : 1,
+                            id : Delivery.id
+                    });
                 })
                 .catch(function (err) {
                     console.log(err);
@@ -207,15 +268,19 @@ function _updateClient(req, where, paspor) {
     if (paspor) newClient[CLIENT_CONST.FIELDS.PASPORT_NUMBER] = req.body[CLIENT_CONST.FIELDS.PASPORT_NUMBER];
     return Client.updateOne(newClient, where);
 }
-function _updateDelivery(req, where) {
+function _updateDelivery(req, where, data) {
     var newDelivery = {};
-    newDelivery[DELIVERY_CONST.FIELDS.PHONE_NUMBER] = req.body[DELIVERY_CONST.FIELDS.PHONE_NUMBER];
-    newDelivery[DELIVERY_CONST.FIELDS.STATUS] = req.body[DELIVERY_CONST.FIELDS.STATUS];
-    newDelivery[DELIVERY_CONST.FIELDS.DELIVERY_DATE] = req.body[DELIVERY_CONST.FIELDS.DELIVERY_DATE];
-    newDelivery[DELIVERY_CONST.FIELDS.EXPEDITION_NO] = req.body[DELIVERY_CONST.FIELDS.EXPEDITION_NO];
-    newDelivery[DELIVERY_CONST.FIELDS.ADDRESS] = req.body[DELIVERY_CONST.FIELDS.ADDRESS];
-    newDelivery[DELIVERY_CONST.FIELDS.INPUT_BY] = req.body[DELIVERY_CONST.FIELDS.INPUT_BY];
-    newDelivery[DELIVERY_CONST.FIELDS.RECEIVED_DATE] = req.body[DELIVERY_CONST.FIELDS.RECEIVED_DATE];
+    if (!data){
+        newDelivery[DELIVERY_CONST.FIELDS.PHONE_NUMBER] = req.body[DELIVERY_CONST.FIELDS.PHONE_NUMBER];
+        newDelivery[DELIVERY_CONST.FIELDS.STATUS] = req.body[DELIVERY_CONST.FIELDS.STATUS];
+        newDelivery[DELIVERY_CONST.FIELDS.DELIVERY_DATE] = req.body[DELIVERY_CONST.FIELDS.DELIVERY_DATE];
+        newDelivery[DELIVERY_CONST.FIELDS.EXPEDITION_NO] = req.body[DELIVERY_CONST.FIELDS.EXPEDITION_NO];
+        newDelivery[DELIVERY_CONST.FIELDS.ADDRESS] = req.body[DELIVERY_CONST.FIELDS.ADDRESS];
+        newDelivery[DELIVERY_CONST.FIELDS.INPUT_BY] = req.body[DELIVERY_CONST.FIELDS.INPUT_BY];
+        newDelivery[DELIVERY_CONST.FIELDS.RECEIVED_DATE] = req.body[DELIVERY_CONST.FIELDS.RECEIVED_DATE];
+    }else {
+        newDelivery = data;
+    }
     return Delivery.updateOne(newDelivery, where);
 }
 function _getClientByPasportNumber(req) {

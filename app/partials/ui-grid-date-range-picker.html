@@ -1,0 +1,3 @@
+<button class="btn btn-default date-time-filter-buttons" style="width:90%;padding:inherit;" ng-click="openDatePicker(colFilter)">{{ colFilter.name }}</button>
+<div role="button" class="ui-grid-filter-button-select cancel-custom-date-range-filter-button ng-scope" ng-click="removeFilter(colFilter, $index)" ng-if="!colFilter.disableCancelFilterButton" ng-disabled="colFilter.term === undefined || colFilter.term === null || colFilter.term === '\\'" ng-show="colFilter.term !== undefined &amp;&amp; colFilter.term != null" tabindex="0" aria-hidden="false" aria-disabled="false" style="">
+    <i class="ui-grid-icon-cancel cancel-custom-date-range-filter" ui-grid-one-bind-aria-label="aria.removeFilter" aria-label="Remove Filter">&nbsp;</i></div>

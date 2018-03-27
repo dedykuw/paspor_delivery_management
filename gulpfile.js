@@ -9,12 +9,28 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var plumber = require('gulp-plumber');
 
+var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
+var cssmin = require('gulp-cssmin');
+var rename = require('gulp-rename');
+
+
+gulp.task('sass', function() {
+    return gulp.src('public/scss/style.scss')
+        .pipe(sass())
+        .pipe(autoprefixer())
+        .pipe(gulp.dest('public/css'))
+        .pipe(cssmin())
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest('public/css'))
+});
 
 gulp.task('angular', function() {
   return gulp.src([
     'app/app.js',
     'app/controllers/*.js',
-    'app/services/*.js'
+    'app/services/*.js',
+    'app/directives/*.js'
   ])
     .pipe(concat('application.js'))
     .pipe(ngAnnotate())
@@ -61,5 +77,7 @@ gulp.task('watch', function() {
   gulp.watch('confirm_app/**/*.js', ['confirm_angular']);
 });
 
-gulp.task('build', ['angular', 'vendor', 'templates', 'confirm_templates', 'confirm_angular']);
+gulp.task('build', ['angular', 'vendor', 'templates', 'confirm_templates', 'confirm_angular','sass']);
 gulp.task('default', ['build', 'watch']);
+
+

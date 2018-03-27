@@ -7,11 +7,13 @@ angular.module('MyConfirmApp')
         $scope.getStepTemplate = getStepTemplate ;
         $scope.gotoStep = gotoStep;
         $scope.search = searchPaspor;
+        $scope.confirmDelivery = confirmDelivery;
         $scope.currentStep = 1;
         $scope.steps = _getStep();
         $scope.client = {};
         $scope.formValid = false;
         $scope.pasportReceived = false;
+        $scope.delivery = {};
 
 
         function gotoStep(newStep) {
@@ -27,18 +29,37 @@ angular.module('MyConfirmApp')
         function searchPaspor(isValid) {
             if (isValid){
                 _showLoadingBar();
-                Delivery.getDeliveryByPasporAndName($scope.client)
+                Delivery.checkDeliveryByPasporAndName($scope.client)
                     .then(function (Delivery) {
-                        _hideLoadingBar();
-                        gotoStep(2);
-                    },
-                    function (err) {
-                        _hideLoadingBar();
-                    })
+                            console.log(Delivery);
+                            _hideLoadingBar();
+                            if (Delivery.data.exist == 1) {
+                                gotoStep(2);
+                                $scope.delivery.id = Delivery.data.id;
+                            }
+                        },
+                        function (err) {
+                            _hideLoadingBar();
+                        })
             }
 
         }
 
+        function confirmDelivery() {
+            _showLoadingBar();
+
+            $scope.delivery.status = 1;
+            Delivery.confirmPasporDelivery($scope.delivery)
+                .then(function (Delivery) {
+                        _hideLoadingBar();
+                        if (Delivery.data.success == 1) {
+                            $scope.pasportReceived = true;
+                        }
+                    },
+                    function () {
+                        _hideLoadingBar();
+                    })
+        }
 
         // private function
         function _showLoadingBar() {
